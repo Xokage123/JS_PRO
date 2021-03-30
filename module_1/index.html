@@ -4,21 +4,59 @@
   <meta charset="UTF-8">
   <title>Title</title>
   <link rel="stylesheet" href="./bootstrap-4.6.0-dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="./jquery-ui-themes-1.12.1/jquery-ui.min.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="./bootstrap-4.6.0-dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./src/index.js" defer></script>
+  <style>
+    section {
+        padding: 20px;
+        margin-bottom: 150px;
+    }
+    .scroll-top__button {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+    }
+  </style>
 </head>
 <body>
-<h1>Привет мир!</h1>
-<div class="dropdown">
-  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-    Dropdown link
-  </a>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-    <a class="dropdown-item" href="#">Action</a>
-    <a class="dropdown-item" href="#">Another action</a>
-    <a class="dropdown-item" href="#">Something else here</a>
-  </div>
-</div>
+<header><h1>Модуль 1</h1></header>
+<main>
+  <section>
+    <h2>Задание 1</h2>
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Нажми на меня
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="#">Картошка</a>
+        <a class="dropdown-item" href="#">Капуста</a>
+        <a class="dropdown-item" href="#">Помидоры</a>
+        <a class="dropdown-item" href="#">Огруцы</a>
+      </div>
+    </div>
+  </section>
+  <section>
+    <h2>Задание 2</h2>
+    <form id="form">
+      <div class="form-group">
+        <label for="form__name">Имя</label>
+        <input type="text" class="form-control" id="form__name" aria-describedby="emailHelp">
+        <small class="form-text text-muted">Вводите только кирилицу!</small>
+      </div>
+      <div class="form-group">
+        <label for="form__first-name">Фамилия</label>
+        <input type="text" class="form-control" id="form__first-name">
+        <small class="form-text text-muted">Вводите только кирилицу!</small>
+      </div>
+      <div class="form-group">
+        <label for="form__second-name">Отчество</label>
+        <input type="text" class="form-control" id="form__second-name">
+        <small class="form-text text-muted">Вводите только кирилицу!</small>
+      </div>
+      <button id="form-submit" type="submit" class="btn btn-primary">Отправить</button>
+    </form>
+  </section>
+  <button type="button" class="btn btn-primary scroll-top__button">Прокрутка вверх</button>
+</main>
+<footer></footer>
 </body>
 </html>
