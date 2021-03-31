@@ -122,7 +122,7 @@ function goTop (ev) {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-window.addEventListener("scroll", ev => {
+window.addEventListener("scroll", () => {
   if (window.pageYOffset >= 100) {
     buttonScrollTop.style.display = "block";
   } else {
