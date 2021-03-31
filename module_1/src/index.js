@@ -119,9 +119,7 @@ buttonScrollTop.addEventListener("click", goTop)
 
 function goTop (ev) {
   ev.preventDefault();
-  if (!(window.pageYOffset === 0)) {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }
+  window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 window.addEventListener("scroll", ev => {
