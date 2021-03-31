@@ -35,12 +35,40 @@ function checkingFields (ev) {
   ev.preventDefault();
   // Массив для хранения букв, проходящтх проверку
   let sword = "";
-  for(let i=0;i<ev.target.value.length;i++) {
-    const letter = ev.target.value[i];
-    if(isKyr(letter)) {
+  for (let letter of ev.target.value) {
+    if (letter === " " || letter === "-") {
       sword = sword + letter;
+    } else {
+      if(isKyr(letter)) {
+        sword = sword + letter;
+      }
     }
   }
+
+  function checkStart () {
+    if (sword.startsWith("-") || sword.startsWith(" ")) {
+      sword = sword.slice(1);
+      checkStart();
+    }
+  }
+  function checkEnd () {
+    if (sword.endsWith("-") || sword.endsWith(" ")) {
+      sword = sword.slice(0, -1);
+      checkEnd()
+    }
+  }
+  checkStart();
+  checkEnd();
+  // Соединяем пробелы в 1
+  sword = sword.replace(/\s+/g, ' ');
+  // Соеднияем дефисы в 1
+  sword = sword.replace(/(-)+/g, '-');
+  sword.trim();
+  let firstLetter = sword.slice(0, 1);
+  let letter = sword.slice(1);
+  firstLetter = firstLetter.toUpperCase();
+  letter = letter.toLowerCase();
+  sword = `${firstLetter}${letter}`;
   ev.target.value = sword;
 }
 // Проверка на кирилицу
@@ -50,7 +78,6 @@ const isKyr = function (str) {
 // Проверка ввода с кливиатуры символов
 function checkValue (ev) {
   ev.preventDefault();
-  const check = /[а-я]/i.test(ev.key);
   ev.target.value = ev.target.value.replace(/[a-z0-9]/i, "");
 }
 // Добавление обзазца и очищение полей
@@ -98,7 +125,11 @@ function goTop (ev) {
 }
 
 window.addEventListener("scroll", ev => {
-  console.log(window.pageYOffset);
+  if (window.pageYOffset >= 100) {
+    buttonScrollTop.style.display = "block";
+  } else {
+    buttonScrollTop.style.display = "none";
+  }
 },{
   passive: true
 })
