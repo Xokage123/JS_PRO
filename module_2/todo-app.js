@@ -1,8 +1,25 @@
+import {
+    addCaseTodos,
+    getTodos,
+    getTodo,
+    deleteCaseFromTodos,
+    updateCaseFromTodos
+} from "./src/todo-app/api.js"
+import {
+    createAppTitle,
+    createTodoItemForm,
+    createTodoList,
+    createTodoItem,
+    toggleDisabled,
+    buttonCase
+} from "./src/todo-app/view.js"
+
 let newArrayItemObject = [];
 let arrayLocalItemString = "";
 
+// Работа с локальным хранилищем
 function addItemInLocal(localItemKey) {
-    for (let i = 0; i < newArrayItemObject.length; i++) {
+    for (let i = 0; i <= newArrayItemObject.length; i++) {
         arrayLocalItemString = "";
 
         for (let i = 0; i < newArrayItemObject.length; i++) {
@@ -12,198 +29,163 @@ function addItemInLocal(localItemKey) {
             };
         }
     };
-
-    if (newArrayItemObject.length == 0) {
-        localStorage.removeItem(localItemKey);
-    } else {
-        localStorage.setItem(localItemKey, arrayLocalItemString);
-    }
+    localStorage.setItem(localItemKey, arrayLocalItemString);
 }
 
-function createAppTitle(title) {
-    const appTitle = document.createElement("h2");
-    appTitle.innerHTML = title;
-    return appTitle;
-}
 
-function createTodoItemForm() {
-    const form = document.createElement("form");
-    const input = document.createElement("input");
-    const buttonWrapper = document.createElement("div");
-    const button = document.createElement("button");
-
-    form.classList.add('input-group', 'mb-3');
-    input.classList.add('form-control');
-    input.placeholder = 'Введите название нового дела';
-    buttonWrapper.classList.add('input-group-append');
-    button.classList.add('btn', 'btn-primary');
+async function addTodoToLocalAndServerCase({ input, button } = item, key, url) {
+    const todoListObjectServer = {
+        title: input.value,
+        completed: false,
+    };
+    const answer = await addCaseTodos(url, todoListObjectServer);
+    // Локальная реализация
+    const todoListObjectLocal = {
+        id: answer.data.id,
+        name: input.value,
+        status: "not-done",
+    };
+    newArrayItemObject.push(todoListObjectLocal);
+    addItemInLocal(key);
+    input.value = "";
     button.disabled = true;
-    button.textContent = "Добавить имя";
-
-    buttonWrapper.append(button);
-    form.append(input);
-    form.append(buttonWrapper);
-
-    return {
-        form,
-        input,
-        button
-    }
+    return todoListObjectLocal;
 }
 
-function createTodoList() {
-    const list = document.createElement("ul");
-    list.classList.add("list-group");
-    return list;
-}
-
-function createTodoApp(container, title = "Список дел", localItemKey) {
-    // Загружаем из хранилища все данные строкой
-    const localItem = localStorage.getItem(localItemKey);
-    // Проверяем, если ты значение в кейсе
-    if (localItem) {
-        arrayLocalItemString = localItem.split("},");
+function startInfo(key) {
+    const array = localStorage.getItem(key);
+    if (array) {
+        arrayLocalItemString = array.split("},");
         for (let i = 0; i < arrayLocalItemString.length; i++) {
             if (i != arrayLocalItemString.length - 1) {
                 arrayLocalItemString[i] += "}";
             }
             newArrayItemObject.push(JSON.parse(arrayLocalItemString[i]));
         };
-    } else {
-        arrayLocalItemString = [];
     }
+}
+
+function createTodoApp(container, title = "Список дел", localItemKey, url) {
+    startInfo(localItemKey);
+    // Добавляем реализацию кнопкам
+    function addButtonsImplementation({ doneButton, deleteButton, item } = item, id) {
+        function toggleDoneStatus() {
+            // Локальная реализация
+            item.classList.toggle("list-group-item-success");
+            for (let i = 0; i < newArrayItemObject.length; i++) {
+                if (newArrayItemObject[i].name == item.firstChild.data) {
+                    if (newArrayItemObject[i].status == "done") {
+                        newArrayItemObject[i].status = "not-done";
+                    } else if (newArrayItemObject[i].status = "not-done") {
+                        newArrayItemObject[i].status = "done";
+                    }
+                }
+            };
+            addItemInLocal(localItemKey);
+            // Серверная реализация
+            getTodo(id)
+                .then(({ data } = answer) => {
+                    if (data.completed) {
+                        updateCaseFromTodos(id, { "completed": false })
+                    } else {
+                        updateCaseFromTodos(id, { "completed": true })
+                    }
+                });
+        }
+
+        function deleteItem() {
+            if (confirm("Вы уверены что хотите удалить это дело?")) {
+                // Локальная реализация
+                for (let i = 0; i < newArrayItemObject.length; i++) {
+                    if (newArrayItemObject[i].name == item.firstChild.data) {
+                        if (newArrayItemObject.length == 1) {
+                            newArrayItemObject.pop();
+                        } else {
+                            newArrayItemObject.splice(i, 1);
+                        }
+                    }
+                };
+                addItemInLocal(localItemKey);
+                getTodos(url);
+                deleteCaseFromTodos(id);
+                getTodos(url);
+                item.remove();
+                // Серверная реализация
+            };
+        }
+        doneButton.addEventListener("click", toggleDoneStatus);
+        deleteButton.addEventListener("click", deleteItem);
+    }
+    // СОздание нового дела в списке
+    function createNewTodo({ form, input } = item, item) {
+        function createNewTodo(ev) {
+            ev.preventDefault();
+            const todoItem = createTodoItem(input.value);
+            addTodoToLocalAndServerCase(item, localItemKey, url)
+                .then(answer => {
+                    addButtonsImplementation(todoItem, answer.id);
+                    todoList.append(todoItem.item);
+                });
+        }
+        form.addEventListener("submit", createNewTodo);
+    }
+    // Проходится по массиву и добавляем элементы списка
+    function iteratingArray(array) {
+        for (let item of array) {
+            let todoItem;
+            switch (buttonCase.dataset.case) {
+                case "local":
+                    todoItem = createTodoItem(item.name);
+                    if (item.status == "done") {
+                        todoItem.item.classList.toggle("list-group-item-success");
+                    };
+                    addButtonsImplementation(todoItem, item.id);
+                    todoList.append(todoItem.item);
+                    break;
+                case "server":
+                    todoItem = createTodoItem(item.title);
+                    if (item.completed) {
+                        todoItem.item.classList.toggle("list-group-item-success");
+                    };
+                    addButtonsImplementation(todoItem, item.id);
+                    todoList.append(todoItem.item);
+                    break;
+            }
+        }
+    }
+
+    function switchCase(prop) {
+        switch (prop) {
+            case "local":
+                iteratingArray(newArrayItemObject);
+                break;
+            case "server":
+                getTodos(url)
+                    .then(answer => iteratingArray(answer));
+                break;
+            default:
+                return;
+        }
+    }
+
+    function updateCase(ev) {
+        const list = document.querySelector('.list-group');
+        list.innerHTML = " ";
+        switchCase(ev.target.dataset.case);
+    }
+
 
     const todoAppTitle = createAppTitle(title);
     const todoItemForm = createTodoItemForm();
     const todoList = createTodoList();
-
     container.append(todoAppTitle);
     container.append(todoItemForm.form);
     container.append(todoList);
 
-    for (let i = 0; i < newArrayItemObject.length; i++) {
-        const todoItem = createTodoItem(newArrayItemObject[i].name);
+    buttonCase.addEventListener("click", updateCase)
 
-        if (newArrayItemObject[i].status == "done") {
-            todoItem.item.classList.toggle("list-group-item-success");
-        };
-
-        todoItem.doneButton.addEventListener("click", (ev) => {
-            todoItem.item.classList.toggle("list-group-item-success");
-            for (let i = 0; i < newArrayItemObject.length; i++) {
-                if (newArrayItemObject[i].name == todoItem.item.firstChild.data) {
-                    if (newArrayItemObject[i].status == "done") {
-                        newArrayItemObject[i].status = "not-done";
-                    } else if (newArrayItemObject[i].status = "not-done") {
-                        newArrayItemObject[i].status = "done";
-                    }
-                }
-            };
-            addItemInLocal(localItemKey);
-        })
-        todoItem.deleteButton.addEventListener("click", (ev) => {
-            if (confirm("Вы уверены что хотите удалить это дело?")) {
-                for (let i = 0; i < newArrayItemObject.length; i++) {
-                    if (newArrayItemObject[i].name == todoItem.item.firstChild.data) {
-                        if (newArrayItemObject.length == 1) {
-                            newArrayItemObject.pop();
-                        } else {
-                            newArrayItemObject.splice(i - 1, 1);
-                        }
-                    }
-                };
-                addItemInLocal(localItemKey);
-                todoItem.item.remove();
-            };
-        });
-        todoList.append(todoItem.item);
-    }
-
-    todoItemForm.input.addEventListener("input", (ev) => {
-        if (!todoItemForm.input.value) {
-            todoItemForm.button.disabled = true;
-        } else {
-            todoItemForm.button.disabled = false;
-        }
-    })
-
-    todoItemForm.form.addEventListener("submit", (ev) => {
-        ev.preventDefault();
-
-        if (!todoItemForm.input.value) {
-            return;
-        }
-
-        const todoItem = createTodoItem(todoItemForm.input.value);
-
-        todoItem.doneButton.addEventListener("click", (ev) => {
-            todoItem.item.classList.toggle("list-group-item-success");
-            for (let i = 0; i < newArrayItemObject.length; i++) {
-                if (newArrayItemObject[i].name == todoItem.item.firstChild.data) {
-                    if (newArrayItemObject[i].status == "done") {
-                        newArrayItemObject[i].status = "not-done";
-                    } else if (newArrayItemObject[i].status = "not-done") {
-                        newArrayItemObject[i].status = "done";
-                    }
-                }
-            };
-            addItemInLocal(localItemKey);
-        })
-        todoItem.deleteButton.addEventListener("click", (ev) => {
-            if (confirm("Вы уверены что хотите удалить это дело?")) {
-                for (let i = 0; i < newArrayItemObject.length; i++) {
-                    if (newArrayItemObject[i].name == todoItem.item.firstChild.data) {
-                        if (newArrayItemObject.length == 1) {
-                            newArrayItemObject.pop();
-                        } else {
-                            newArrayItemObject.splice(i - 1, 1);
-                        }
-                    }
-                };
-                addItemInLocal(localItemKey);
-                todoItem.item.remove();
-            };
-        })
-
-        todoList.append(todoItem.item);
-
-        const todoListObject = {
-            name: todoItemForm.input.value,
-            status: "not-done",
-        }
-
-        newArrayItemObject.push(todoListObject);
-
-        addItemInLocal(localItemKey);
-
-        todoItemForm.input.value = "";
-        todoItemForm.button.disabled = true;
-    })
-}
-
-function createTodoItem(name) {
-    const item = document.createElement("li");
-    const buttonGroup = document.createElement("div");
-    const doneButton = document.createElement("button");
-    const deleteButton = document.createElement("button");
-
-    item.classList.add("list-group-item", "d-flex", "justify-content-between", "alogn-item-center");
-    item.textContent = name;
-
-    buttonGroup.classList.add("btn-group", "btn-group-sm");
-    doneButton.classList.add("btn", "btn-success");
-    doneButton.textContent = "Готово";
-    deleteButton.classList.add("btn", "btn-danger");
-    deleteButton.textContent = "Удалить";
-
-    buttonGroup.append(doneButton);
-    buttonGroup.append(deleteButton);
-    item.append(buttonGroup);
-
-    return {
-        item,
-        doneButton,
-        deleteButton
-    }
+    toggleDisabled(todoItemForm);
+    switchCase(buttonCase.dataset.case);
+    createNewTodo(todoItemForm, todoItemForm);
 }
 export { createTodoApp };
