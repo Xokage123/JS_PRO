@@ -1,21 +1,6 @@
 import myData from "../CONST.js";
 
 // Добавление дела в список
-// export async function detailUser(id) {
-//     const answer = await fetch(`https://gorest.co.in/public-api/users/${id}`, {
-//         method: "GET",
-//         headers: {
-//             'Authorization': `Bearer ${myData.bearer}`,
-//             'Content-Type': 'application/json',
-//             'Accept': 'application/json'
-//         }
-//     })
-//     const todos = await answer.json();
-// }
-
-
-
-// Добавление дела в список
 export async function addCaseTodos(urlPerson, deal) {
     const answer = await fetch(urlPerson, {
         method: "POST",

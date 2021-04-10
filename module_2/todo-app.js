@@ -32,7 +32,6 @@ function addItemInLocal(localItemKey) {
     localStorage.setItem(localItemKey, arrayLocalItemString);
 }
 
-
 async function addTodoToLocalAndServerCase({ input, button } = item, key, url) {
     const todoListObjectServer = {
         title: input.value,
