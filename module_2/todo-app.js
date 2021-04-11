@@ -37,7 +37,9 @@ async function addTodoToLocalAndServerCase({ input, button } = item, key, url) {
         title: input.value,
         completed: false,
     };
+    console.log(url);
     const answer = await addCaseTodos(url, todoListObjectServer);
+    console.log(answer);
     // Локальная реализация
     const todoListObjectLocal = {
         id: answer.data.id,
@@ -61,6 +63,19 @@ function startInfo(key) {
             }
             newArrayItemObject.push(JSON.parse(arrayLocalItemString[i]));
         };
+    }
+    if (!localStorage.key("caseTodos")) {
+        localStorage.setItem("caseTodos", "local");
+        switchCase(localStorage.getItem("caseTodos"));
+    } else {
+        switch (localStorage.getItem("caseTodos")) {
+            case "local":
+                buttonCase.innerHTML = "Список дел загружается локально";
+                break;
+            case "server":
+                buttonCase.innerHTML = "Список дел загружается c сервера";
+                break;
+        }
     }
 }
 
@@ -117,22 +132,23 @@ function createTodoApp(container, title = "Список дел", localItemKey, u
     }
     // СОздание нового дела в списке
     function createNewTodo({ form, input } = item, item) {
-        function createNewTodo(ev) {
+        function createTodo(ev) {
             ev.preventDefault();
             const todoItem = createTodoItem(input.value);
             addTodoToLocalAndServerCase(item, localItemKey, url)
                 .then(answer => {
+                    console.log(answer);
                     addButtonsImplementation(todoItem, answer.id);
                     todoList.append(todoItem.item);
                 });
         }
-        form.addEventListener("submit", createNewTodo);
+        form.addEventListener("submit", createTodo);
     }
     // Проходится по массиву и добавляем элементы списка
     function iteratingArray(array) {
         for (let item of array) {
             let todoItem;
-            switch (buttonCase.dataset.case) {
+            switch (localStorage.getItem("caseTodos")) {
                 case "local":
                     todoItem = createTodoItem(item.name);
                     if (item.status == "done") {
@@ -160,17 +176,34 @@ function createTodoApp(container, title = "Список дел", localItemKey, u
                 break;
             case "server":
                 getTodos(url)
-                    .then(answer => iteratingArray(answer));
+                    .then(answer => {
+                        console.log(answer);
+                        iteratingArray(answer);
+                    });
                 break;
             default:
                 return;
         }
     }
 
-    function updateCase(ev) {
+    function toggleCase(store) {
+        switch (store) {
+            case "local":
+                localStorage.setItem("caseTodos", "server");
+                buttonCase.innerHTML = "Список дел загружается c сервера";
+                break;
+            case "server":
+                localStorage.setItem("caseTodos", "local");
+                buttonCase.innerHTML = "Список дел загружается локально";
+                break;
+        }
+    }
+
+    function updateCase() {
         const list = document.querySelector('.list-group');
         list.innerHTML = " ";
-        switchCase(ev.target.dataset.case);
+        toggleCase(localStorage.getItem("caseTodos"));
+        switchCase(localStorage.getItem("caseTodos"));
     }
 
 
@@ -181,10 +214,10 @@ function createTodoApp(container, title = "Список дел", localItemKey, u
     container.append(todoItemForm.form);
     container.append(todoList);
 
-    buttonCase.addEventListener("click", updateCase)
+    buttonCase.addEventListener("click", updateCase);
 
     toggleDisabled(todoItemForm);
-    switchCase(buttonCase.dataset.case);
+    switchCase(localStorage.getItem("caseTodos"));
     createNewTodo(todoItemForm, todoItemForm);
 }
 export { createTodoApp };
