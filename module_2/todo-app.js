@@ -32,25 +32,30 @@ function addItemInLocal(localItemKey) {
     localStorage.setItem(localItemKey, arrayLocalItemString);
 }
 
-async function addTodoToLocalAndServerCase({ input, button } = item, key, url) {
-    const todoListObjectServer = {
-        title: input.value,
-        completed: false,
-    };
-    console.log(url);
-    const answer = await addCaseTodos(url, todoListObjectServer);
-    console.log(answer);
-    // Локальная реализация
-    const todoListObjectLocal = {
-        id: answer.data.id,
-        name: input.value,
-        status: "not-done",
-    };
-    newArrayItemObject.push(todoListObjectLocal);
-    addItemInLocal(key);
+async function addTodoInStore(todo, store, { input, button } = item, key, url, realizationButton) {
+    console.log(store);
+    switch (store) {
+        case "local":
+            const todoListObjectLocal = {
+                name: input.value,
+                status: "not-done",
+            };
+            newArrayItemObject.push(todoListObjectLocal);
+            addItemInLocal(key);
+            realizationButton(todo);
+            break;
+        case "server":
+            const todoListObjectServer = {
+                title: input.value,
+                completed: false,
+            };
+            const answer = await addCaseTodos(url, todoListObjectServer);
+            realizationButton(todo, answer.data.id);
+            console.log(answer);
+            break;
+    }
     input.value = "";
     button.disabled = true;
-    return todoListObjectLocal;
 }
 
 function startInfo(key) {
@@ -84,63 +89,73 @@ function createTodoApp(container, title = "Список дел", localItemKey, u
     // Добавляем реализацию кнопкам
     function addButtonsImplementation({ doneButton, deleteButton, item } = item, id) {
         function toggleDoneStatus() {
-            // Локальная реализация
-            item.classList.toggle("list-group-item-success");
-            for (let i = 0; i < newArrayItemObject.length; i++) {
-                if (newArrayItemObject[i].name == item.firstChild.data) {
-                    if (newArrayItemObject[i].status == "done") {
-                        newArrayItemObject[i].status = "not-done";
-                    } else if (newArrayItemObject[i].status = "not-done") {
-                        newArrayItemObject[i].status = "done";
-                    }
-                }
-            };
-            addItemInLocal(localItemKey);
-            // Серверная реализация
-            getTodo(id)
-                .then(({ data } = answer) => {
-                    if (data.completed) {
-                        updateCaseFromTodos(id, { "completed": false })
-                    } else {
-                        updateCaseFromTodos(id, { "completed": true })
-                    }
-                });
+            switch (localStorage.getItem("caseTodos")) {
+                case "local":
+                    item.classList.toggle("list-group-item-success");
+                    for (let i = 0; i < newArrayItemObject.length; i++) {
+                        if (newArrayItemObject[i].name == item.firstChild.data) {
+                            if (newArrayItemObject[i].status == "done") {
+                                newArrayItemObject[i].status = "not-done";
+                            } else if (newArrayItemObject[i].status = "not-done") {
+                                newArrayItemObject[i].status = "done";
+                            }
+                        }
+                    };
+                    addItemInLocal(localItemKey);
+                    break;
+                case "server":
+                    getTodo(id)
+                        .then(({ data } = answer) => {
+                            if (data.completed) {
+                                updateCaseFromTodos(id, { "completed": false })
+                                    .then(() => {
+                                        const list = document.querySelector('.list-group');
+                                        list.innerHTML = " ";
+                                        switchCase(localStorage.getItem("caseTodos"));
+                                    })
+                            } else {
+                                updateCaseFromTodos(id, { "completed": true })
+                                    .then(() => {
+                                        switchCase(localStorage.getItem("caseTodos"));
+                                    })
+                            }
+                        });
+                    break;
+            }
         }
 
         function deleteItem() {
             if (confirm("Вы уверены что хотите удалить это дело?")) {
-                // Локальная реализация
-                for (let i = 0; i < newArrayItemObject.length; i++) {
-                    if (newArrayItemObject[i].name == item.firstChild.data) {
-                        if (newArrayItemObject.length == 1) {
-                            newArrayItemObject.pop();
-                        } else {
-                            newArrayItemObject.splice(i, 1);
-                        }
-                    }
-                };
-                addItemInLocal(localItemKey);
-                getTodos(url);
-                deleteCaseFromTodos(id);
-                getTodos(url);
-                item.remove();
-                // Серверная реализация
+                switch (localStorage.getItem("caseTodos")) {
+                    case "local":
+                        for (let i = 0; i < newArrayItemObject.length; i++) {
+                            if (newArrayItemObject[i].name == item.firstChild.data) {
+                                if (newArrayItemObject.length == 1) {
+                                    newArrayItemObject.pop();
+                                } else {
+                                    newArrayItemObject.splice(i, 1);
+                                }
+                            }
+                        };
+                        addItemInLocal(localItemKey);
+                        break;
+                    case "server":
+                        deleteCaseFromTodos(id);
+                        break;
+                }
             };
+            item.remove();
         }
         doneButton.addEventListener("click", toggleDoneStatus);
         deleteButton.addEventListener("click", deleteItem);
+        todoList.append(item);
     }
     // СОздание нового дела в списке
     function createNewTodo({ form, input } = item, item) {
         function createTodo(ev) {
             ev.preventDefault();
             const todoItem = createTodoItem(input.value);
-            addTodoToLocalAndServerCase(item, localItemKey, url)
-                .then(answer => {
-                    console.log(answer);
-                    addButtonsImplementation(todoItem, answer.id);
-                    todoList.append(todoItem.item);
-                });
+            addTodoInStore(todoItem, localStorage.getItem("caseTodos"), item, localItemKey, url, addButtonsImplementation);
         }
         form.addEventListener("submit", createTodo);
     }
@@ -154,8 +169,7 @@ function createTodoApp(container, title = "Список дел", localItemKey, u
                     if (item.status == "done") {
                         todoItem.item.classList.toggle("list-group-item-success");
                     };
-                    addButtonsImplementation(todoItem, item.id);
-                    todoList.append(todoItem.item);
+                    addButtonsImplementation(todoItem);
                     break;
                 case "server":
                     todoItem = createTodoItem(item.title);
@@ -163,7 +177,6 @@ function createTodoApp(container, title = "Список дел", localItemKey, u
                         todoItem.item.classList.toggle("list-group-item-success");
                     };
                     addButtonsImplementation(todoItem, item.id);
-                    todoList.append(todoItem.item);
                     break;
             }
         }
@@ -177,7 +190,8 @@ function createTodoApp(container, title = "Список дел", localItemKey, u
             case "server":
                 getTodos(url)
                     .then(answer => {
-                        console.log(answer);
+                        const list = document.querySelector('.list-group');
+                        list.innerHTML = " ";
                         iteratingArray(answer);
                     });
                 break;
