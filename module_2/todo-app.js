@@ -58,33 +58,32 @@ async function addTodoInStore(todo, store, { input, button } = item, key, url, r
     button.disabled = true;
 }
 
-function startInfo(key) {
-    const array = localStorage.getItem(key);
-    if (array) {
-        arrayLocalItemString = array.split("},");
-        for (let i = 0; i < arrayLocalItemString.length; i++) {
-            if (i != arrayLocalItemString.length - 1) {
-                arrayLocalItemString[i] += "}";
+function createTodoApp(container, title = "Список дел", localItemKey, url) {
+    function startInfo(key) {
+        const array = localStorage.getItem(key);
+        if (array) {
+            arrayLocalItemString = array.split("},");
+            for (let i = 0; i < arrayLocalItemString.length; i++) {
+                if (i != arrayLocalItemString.length - 1) {
+                    arrayLocalItemString[i] += "}";
+                }
+                newArrayItemObject.push(JSON.parse(arrayLocalItemString[i]));
+            };
+        }
+        if (!localStorage.key("caseTodos")) {
+            localStorage.setItem("caseTodos", "local");
+            switchCase(localStorage.getItem("caseTodos"));
+        } else {
+            switch (localStorage.getItem("caseTodos")) {
+                case "local":
+                    buttonCase.innerHTML = "Список дел загружается локально";
+                    break;
+                case "server":
+                    buttonCase.innerHTML = "Список дел загружается c сервера";
+                    break;
             }
-            newArrayItemObject.push(JSON.parse(arrayLocalItemString[i]));
-        };
-    }
-    if (!localStorage.key("caseTodos")) {
-        localStorage.setItem("caseTodos", "local");
-        switchCase(localStorage.getItem("caseTodos"));
-    } else {
-        switch (localStorage.getItem("caseTodos")) {
-            case "local":
-                buttonCase.innerHTML = "Список дел загружается локально";
-                break;
-            case "server":
-                buttonCase.innerHTML = "Список дел загружается c сервера";
-                break;
         }
     }
-}
-
-function createTodoApp(container, title = "Список дел", localItemKey, url) {
     startInfo(localItemKey);
     // Добавляем реализацию кнопкам
     function addButtonsImplementation({ doneButton, deleteButton, item } = item, id) {
