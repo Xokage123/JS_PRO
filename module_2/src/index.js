@@ -3,6 +3,7 @@ import myData from "./CONST.js";
 
 // Путь
 const path = location.pathname.split('/')[1];
+
 // Хранилище
 const container = document.getElementById('todo-app');
 switch (path) {
