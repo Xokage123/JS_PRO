@@ -33,7 +33,6 @@ function addItemInLocal(localItemKey) {
 }
 
 async function addTodoInStore(todo, store, { input, button } = item, key, url, realizationButton) {
-    console.log(store);
     switch (store) {
         case "local":
             const todoListObjectLocal = {
