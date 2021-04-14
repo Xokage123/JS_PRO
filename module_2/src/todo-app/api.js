@@ -1,58 +1,49 @@
-import myData from "../CONST.js";
-
 // Добавление дела в список
-export async function addCaseTodos(urlPerson, deal) {
-    const answer = await fetch(urlPerson, {
+export async function addCaseTodos(object) {
+    const answer = await fetch('http://localhost:3000/api/todos', {
         method: "POST",
-        body: JSON.stringify(deal),
+        body: JSON.stringify(object),
         headers: {
-            'Authorization': `Bearer ${myData.bearer}`,
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
     })
-    const todos = await answer.json();
-    return todos;
+    const todo = await answer.json();
+    return todo;
 }
 
 // Дает конкретный список
-export async function getTodos(urlPerson) {
-    const answer = await fetch(urlPerson, {
+export async function getTodos(owner) {
+    const answer = await fetch('http://localhost:3000/api/todos', {
         method: "GET",
         headers: {
-            'Authorization': `Bearer ${myData.bearer}`,
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
     })
-    const todos = await answer.json();
-    if (todos.code == 200) {
-        return todos.data;
-    }
+    let todos = await answer.json();
+    todos = todos.filter((item) => item.owner === owner)
+    return todos;
 }
-
-// for (let i = 2016; i <= 2021; i++) {
-//     deleteCaseFromTodos(i);
-// }
 
 export async function deleteCaseFromTodos(id) {
-    const answer = await fetch(`https://gorest.co.in/public-api/todos/${id}`, {
+    const answer = await fetch(`http://localhost:3000/api/todos/${id}`, {
         method: "DELETE",
         headers: {
-            'Authorization': `Bearer ${myData.bearer}`,
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
-    })
+    });
+    const response = await answer.json();
+    if (response.status === 404) console.log('Не удалось удалить дело, так как его не существует');
     const todos = await answer.json();
 }
 
-export async function updateCaseFromTodos(id, deal) {
-    const answer = await fetch(`https://gorest.co.in/public-api/todos/${id}`, {
+export async function updateCaseFromTodos(id, doneValue) {
+    const answer = await fetch(`http://localhost:3000/api/todos/${id}`, {
         method: "PATCH",
-        body: JSON.stringify(deal),
+        body: JSON.stringify(doneValue),
         headers: {
-            'Authorization': `Bearer ${myData.bearer}`,
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
@@ -61,10 +52,9 @@ export async function updateCaseFromTodos(id, deal) {
 }
 
 export async function getTodo(id) {
-    const answer = await fetch(`https://gorest.co.in/public-api/todos/${id}`, {
+    const answer = await fetch(`http://localhost:3000/api/todos/${id}`, {
         method: "GET",
         headers: {
-            'Authorization': `Bearer ${myData.bearer}`,
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }

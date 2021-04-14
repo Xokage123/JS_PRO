@@ -1,6 +1,4 @@
 import { createTodoApp } from "../todo-app.js"
-import myData from "./CONST.js";
-
 // Путь
 const path = location.pathname.split('/')[1];
 
@@ -8,13 +6,13 @@ const path = location.pathname.split('/')[1];
 const container = document.getElementById('todo-app');
 switch (path) {
     case "dad.html":
-        createTodoApp(container, 'Дела папы', 'Dad', myData.urlDadTodos);
+        createTodoApp(container, 'Дела папы', 'Dad');
         break;
     case "mam.html":
-        createTodoApp(container, 'Дела мамы', 'Mom', myData.urlMomTodos);
+        createTodoApp(container, 'Дела мамы', 'Mom');
         break;
     case "":
     case "index.html":
-        createTodoApp(container, 'Мои дела', 'I', myData.urlMyTodos);
+        createTodoApp(container, 'Мои дела', 'I');
         break;
 }

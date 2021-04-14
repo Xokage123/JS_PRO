@@ -32,7 +32,7 @@ function addItemInLocal(localItemKey) {
     localStorage.setItem(localItemKey, arrayLocalItemString);
 }
 
-async function addTodoInStore(todo, store, { input, button } = item, key, url, realizationButton) {
+async function addTodoInStore(todo, store, { input, button } = item, key, realizationButton) {
     switch (store) {
         case "local":
             const todoListObjectLocal = {
@@ -45,19 +45,19 @@ async function addTodoInStore(todo, store, { input, button } = item, key, url, r
             break;
         case "server":
             const todoListObjectServer = {
-                title: input.value,
-                completed: false,
+                name: input.value,
+                owner: key,
+                done: false,
             };
-            const answer = await addCaseTodos(url, todoListObjectServer);
-            realizationButton(todo, answer.data.id);
-            console.log(answer);
+            const answer = await addCaseTodos(todoListObjectServer);
+            realizationButton(todo, answer.id);
             break;
     }
     input.value = "";
     button.disabled = true;
 }
 
-function createTodoApp(container, title = "Список дел", localItemKey, url) {
+function createTodoApp(container, title = "Список дел", localItemKey) {
     function startInfo(key) {
         const array = localStorage.getItem(key);
         if (array) {
@@ -103,16 +103,14 @@ function createTodoApp(container, title = "Список дел", localItemKey, u
                     break;
                 case "server":
                     getTodo(id)
-                        .then(({ data } = answer) => {
-                            if (data.completed) {
-                                updateCaseFromTodos(id, { "completed": false })
+                        .then((answer) => {
+                            if (answer.done) {
+                                updateCaseFromTodos(id, { "done": false })
                                     .then(() => {
-                                        const list = document.querySelector('.list-group');
-                                        list.innerHTML = " ";
                                         switchCase(localStorage.getItem("caseTodos"));
                                     })
                             } else {
-                                updateCaseFromTodos(id, { "completed": true })
+                                updateCaseFromTodos(id, { "done": true })
                                     .then(() => {
                                         switchCase(localStorage.getItem("caseTodos"));
                                     })
@@ -153,7 +151,7 @@ function createTodoApp(container, title = "Список дел", localItemKey, u
         function createTodo(ev) {
             ev.preventDefault();
             const todoItem = createTodoItem(input.value);
-            addTodoInStore(todoItem, localStorage.getItem("caseTodos"), item, localItemKey, url, addButtonsImplementation);
+            addTodoInStore(todoItem, localStorage.getItem("caseTodos"), item, localItemKey, addButtonsImplementation);
         }
         form.addEventListener("submit", createTodo);
     }
@@ -170,8 +168,8 @@ function createTodoApp(container, title = "Список дел", localItemKey, u
                     addButtonsImplementation(todoItem);
                     break;
                 case "server":
-                    todoItem = createTodoItem(item.title);
-                    if (item.completed) {
+                    todoItem = createTodoItem(item.name);
+                    if (item.done) {
                         todoItem.item.classList.toggle("list-group-item-success");
                     };
                     addButtonsImplementation(todoItem, item.id);
@@ -186,7 +184,7 @@ function createTodoApp(container, title = "Список дел", localItemKey, u
                 iteratingArray(newArrayItemObject);
                 break;
             case "server":
-                getTodos(url)
+                getTodos(localItemKey)
                     .then(answer => {
                         const list = document.querySelector('.list-group');
                         list.innerHTML = " ";
