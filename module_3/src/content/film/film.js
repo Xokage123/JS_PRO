@@ -22,7 +22,6 @@ export const createPageWithMovie = async(number, container) => {
         history.back();
     }
     buttonBack.addEventListener('click', handleBack);
-    container.append(buttonBack);
     // Секция с информацией
     const card = document.createElement("div");
     card.classList.add("card");
@@ -36,7 +35,7 @@ export const createPageWithMovie = async(number, container) => {
     cardText.innerHTML = infoFilm.opening_crawl;
     const planetTitle = document.createElement("h2");
     planetTitle.classList.add("planet-title");
-    planetTitle.innerHTML = PLANET__TITLE;
+    planetTitle.innerHTML = `${PLANET__TITLE} (Планеты, представленные в данном фильме)`;
     const planetList = document.createElement("ol");
     planetList.classList.add("planet-list");
     // Добавляем планеты
@@ -49,7 +48,7 @@ export const createPageWithMovie = async(number, container) => {
     }
     const speciesTitle = document.createElement("h2");
     speciesTitle.classList.add("species-title");
-    speciesTitle.innerHTML = SPECIES__TITLE;
+    speciesTitle.innerHTML = `${SPECIES__TITLE} (Рассы, представленные в данном фильме)`;
     const speciesList = document.createElement("ol");
     speciesList.classList.add("species-list");
     for (let url of infoFilm.species) {
@@ -59,6 +58,7 @@ export const createPageWithMovie = async(number, container) => {
         spaciesItem.innerHTML = spaciestInfo.name;
         speciesList.append(spaciesItem);
     }
+    container.append(buttonBack);
     cardBody.append(cardTitle);
     cardBody.append(cardText);
     cardBody.append(planetTitle);
@@ -68,14 +68,3 @@ export const createPageWithMovie = async(number, container) => {
     card.append(cardBody);
     container.append(card);
 }
-
-// {
-//     /* <div class="card" style="width: 18rem;">
-//       <img src="..." class="card-img-top" alt="...">
-//       <div class="card-body">
-//         <h5 class="card-title">Card title</h5>
-//         <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-//         <a href="#" class="btn btn-primary">Go somewhere</a>
-//       </div>
-//     </div> */
-// }

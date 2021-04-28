@@ -1,7 +1,7 @@
 const cssTest = {};
 
 // Функция для подгрузки контента
-export async function contentUpload(url, params) {
+export async function contentUpload(url) {
     if (url.endsWith(".js")) {
         console.log("Загружаю файл скрипт")
         return import (url);

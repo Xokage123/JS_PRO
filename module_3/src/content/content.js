@@ -17,7 +17,7 @@ export function createListFilms(container, elements) {
         const item = document.createElement("li");
         const linkFilms = document.createElement("a");
         linkFilms.href = `${location.href}?film=${film.number}`;
-        linkFilms.innerHTML = film.title;
+        linkFilms.innerHTML = `${film.title} (Эпизод ${film.number})`;
         linkFilms.addEventListener("click", (ev) => {
             ev.preventDefault();
             goToInfoFilm(linkFilms.href, container);
