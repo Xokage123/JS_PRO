@@ -1,10 +1,14 @@
 import { contentUpload } from "./api/api.js"
-import { createPageWithMovie } from "./content/film/film.js"
+// import { createPageWithMovie } from "./content/film/film.js"
 const main = document.querySelector(".main");
+
+const titleStartPage = document.querySelector(".title");
+const startTitle = "Эписоды звездных войн";
 
 const searcPerams = new URLSearchParams(location.search);
 
 window.addEventListener('popstate', (ev) => {
+    titleStartPage.innerHTML = startTitle;
     Promise.all([
         contentUpload("../content/content.js"),
         contentUpload("https://swapi.dev/api/films"),
@@ -35,11 +39,16 @@ function createList([content, films] = answer) {
                 break;
         }
     });
+
     content.createListFilms(main, films.results);
 };
 if (searcPerams.has("film")) {
-    contentUpload("https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css");
-    createPageWithMovie(searcPerams.get("film"), main);
+    Promise.all([
+        contentUpload("../content/film/film.js"),
+        contentUpload("https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css")
+    ]).then((film) => {
+        film[0].createPageWithMovie(searcPerams.get("film"), main)
+    })
 } else {
     Promise.all([
         contentUpload("../content/content.js"),

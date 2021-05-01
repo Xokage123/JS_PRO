@@ -4,7 +4,8 @@ const cssTest = {};
 export async function contentUpload(url) {
     if (url.endsWith(".js")) {
         console.log("Загружаю файл скрипт")
-        return import (url);
+        return await
+        import (url);
     } else if (url.endsWith(".css")) {
         if (cssTest[url]) {
             return;
