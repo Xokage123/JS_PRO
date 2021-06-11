@@ -2,6 +2,12 @@ const titleHeader = document.querySelector(".header__title");
 const listProducts = document.querySelector(".catalog__list");
 const lietErrors = document.querySelector(".errors__list");
 
+const ERROR_200 = "Произошла ошибка, попробуйте обновить страницу позже";
+const ERROR_404 = "Список товаров пуст";
+const ERROR_500 = "Произошла ошибка, попробуйте обновить страницу позже";
+const INFO_ONLINE = "Ваше устройство подключено к интернету!!!";
+const INFO_OFFLINE = "Ваше устройство не имеет подключения к интернету!!!";
+
 const loadSpiner = document.createElement("div");
 loadSpiner.style = "display: flex";
 loadSpiner.innerHTML = `
@@ -10,6 +16,9 @@ loadSpiner.innerHTML = `
 </div>
 <p class="load__text">...Идет загрузка, подождите</p>
 `
+
+window.addEventListener("online", () => generateErrorItem(navigator.onLine ? INFO_ONLINE : INFO_OFFLINE, navigator.onLine));
+window.addEventListener("offline", () => generateErrorItem(navigator.onLine ? INFO_ONLINE : INFO_OFFLINE, navigator.onLine));
 
 const loadContent = async() => {
     listProducts.append(loadSpiner);
@@ -30,10 +39,6 @@ const loadContent = async() => {
     }
 }
 
-const ERROR_200 = "Произошла ошибка, попробуйте обновить страницу позже";
-const ERROR_404 = "Список товаров пуст";
-const ERROR_500 = "Произошла ошибка, попробуйте обновить страницу позже";
-
 function createListProducts(answer) {
     answer.products.forEach((element) => {
         const itemProducts = document.createElement("li");
@@ -49,9 +54,9 @@ function createListProducts(answer) {
     });
 }
 
-function generateErrorItem(content) {
+function generateErrorItem(content, online) {
     const errorMessage = document.createElement("li");
-    errorMessage.classList.add("errors__item");
+    errorMessage.classList.add("errors__item", online ? "good" : "bad");
     errorMessage.innerHTML = content;
     lietErrors.append(errorMessage);
     setTimeout(() => {

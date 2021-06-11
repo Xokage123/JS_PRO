@@ -51,7 +51,14 @@ ul {
 
 .errors__item {
     font-size: 20px;
-    color: red;
     padding: 5px;
     border: 2px solid black;
+}
+
+.good {
+    color: green;
+}
+
+.bad {
+    color: red;
 }
