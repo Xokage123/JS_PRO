@@ -6,6 +6,7 @@ const ERROR_200 = "Произошла ошибка, попробуйте обн�
 const ERROR_404 = "Список товаров пуст";
 const ERROR_500 = "Произошла ошибка, попробуйте обновить страницу позже";
 const INFO_ONLINE = "Ваше устройство подключено к интернету!!!";
+const ERROR_UNKNOWN = "Неизвестная ошибка!!! Попробуйте перезагрузить страницу или зайти позже"
 const INFO_OFFLINE = "Ваше устройство не имеет подключения к интернету!!!";
 
 const loadSpiner = document.createElement("div");
@@ -19,6 +20,13 @@ loadSpiner.innerHTML = `
 
 window.addEventListener("online", () => generateErrorItem(navigator.onLine ? INFO_ONLINE : INFO_OFFLINE, navigator.onLine));
 window.addEventListener("offline", () => generateErrorItem(navigator.onLine ? INFO_ONLINE : INFO_OFFLINE, navigator.onLine));
+
+class CodeError extends Error {
+    constructor(props) {
+        super(props);
+        this.name = "CodeError";
+    }
+}
 
 const loadContent = async() => {
     listProducts.append(loadSpiner);
@@ -35,7 +43,7 @@ const loadContent = async() => {
             throw new Error(data.status);
         }
     } catch (error) {
-        throw new Error(codeStatus);
+        throw new CodeError(codeStatus);
     }
 }
 
@@ -68,28 +76,39 @@ loadContent()
     .then(createListProducts)
     .catch((error) => {
         const codeError = Number(error.message);
-        switch (codeError) {
-            case 200:
-                generateErrorItem(ERROR_200);
-                break;
-            case 404:
-                titleHeader.innerHTML = ERROR_404;
-                generateErrorItem(ERROR_404);
-                break;
-            case 500:
-                loadContent()
-                    .then(createListProducts)
-                    .catch(() => {
-                        generateErrorItem(ERROR_500);
-                        loadContent()
-                            .then(createListProducts)
-                            .catch(() => {
-                                generateErrorItem(ERROR_500);
-                            })
-                    })
-                break;
-            default:
-                return null;
+        const codeName = error.name;
+        if (codeName === "CodeError") {
+            switch (codeError) {
+                case 200:
+                    generateErrorItem(ERROR_200);
+                    break;
+                case 404:
+                    titleHeader.innerHTML = ERROR_404;
+                    generateErrorItem(ERROR_404);
+                    break;
+                case 500:
+                    loadContent()
+                        .then(createListProducts)
+                        .catch(() => {
+                            generateErrorItem(ERROR_500);
+                            loadContent()
+                                .then(createListProducts)
+                                .catch(() => {
+                                    generateErrorItem(ERROR_500);
+                                })
+                                .finally(() => {
+                                    loadSpiner.remove();
+                                })
+                        })
+                        .finally(() => {
+                            loadSpiner.remove();
+                        })
+                    break;
+                default:
+                    return null;
+            }
+        } else {
+            generateErrorItem(ERROR_UNKNOWN);
         }
     })
     .finally(() => {
