@@ -38,9 +38,9 @@ const loadContent = async() => {
             const answer = await data.json();
             return answer;
         } else if (codeStatus === 404) {
-            throw new Error(data.status);
+            throw new CodeError(data.status);
         } else if (codeStatus === 500) {
-            throw new Error(data.status);
+            throw new CodeError(data.status);
         }
     } catch (error) {
         throw new CodeError(codeStatus);
