@@ -1,13 +1,22 @@
-import { BaseComponent } from './classes.js'
+import {
+    BaseComponent,
+    AddToCartComponent
+} from './classes.js'
 
 const testObject = {
-    selector: '.main'
+    selector: '.main',
+    showLoader: false,
+    showErorState: false
 }
 
 const test = new BaseComponent(testObject);
 
-test.fetch().then(value => {
-    console.log(test._fetchData);
-});
+test.addComponent('.test');
 
-test.addComponent('.test')
+const shopObject = {
+    selector: '.shop__container',
+    showLoader: false,
+    showErorState: false
+}
+const card = new AddToCartComponent(shopObject);
+card.getElement(card.element);

@@ -1,12 +1,24 @@
-import { buttonError, spiner, errorContainer } from './components.js'
+import {
+    buttonError,
+    spiner,
+    errorContainer,
+    errorText,
+    shopButtonStart,
+    containerNav,
+    shopPlus,
+    infoNumber,
+    shopMinus
+} from './components.js'
+import { wait } from './utils/index.js'
 
 export class BaseComponent {
     constructor(props) {
         buttonError.addEventListener('click', _ => this.fetch(this.element))
         try {
+            console.log(props);
             this.element = document.querySelector(props.selector);
-            this.showLoader = props.showLoader ? props.showLoader : true;
-            this.showEror = props.showErorState ? props.showErorState : true;
+            this.showLoader = props.showLoader;
+            this.showEror = props.showErorState;
             if (!this.element) {
                 throw new ComponentError('Ошибка!!! Данный элемент не найден на странице');
             }
@@ -18,12 +30,16 @@ export class BaseComponent {
         }
     }
     addComponent(value) {
-        this.fetch(this.element).then(() => {
+        this.fetch(this.element).then((data) => {
+            this._fetchData = data;
             this.element.append(this.getElement(value));
         }).catch((er) => {
-            buttonError.removeEventListener('click')
-            errorContainer.append(buttonError);
-            console.log(er.message);
+            if (this.showEror) {
+                errorText.innerHTML = er.message;
+                errorContainer.append(errorText, buttonError);
+            } else {
+                errorContainer.innerHTML = 'Произошла ошибка при загрузке данных с сервера, но вы сочли нужным, чтобы мы не показывали информацию о ошибках!!!';
+            }
         })
     }
     getElement(selector) {
@@ -38,29 +54,58 @@ export class BaseComponent {
         }
     }
     async fetch(element) {
-        element.append(spiner);
+        if (this.showLoader) {
+            element.append(spiner);
+        } else {
+            element.innerHTML = 'Идет загрузка...';
+        }
         const value = await wait(5000).finally(() => {
             spiner.remove();
         });
         return new Promise((resolve, reject) => {
-            this._fetchData = value;
-            reject(new FetchError('Ошибка'));
-            // resolve('Данные загружены успешно!!!');
+            element.innerHTML = '';
+            reject(new FetchError('Данные c сервера не загрузились!!'));
+            resolve(value);
         })
     }
 }
 
-function wait(ms) {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            // reject(new FetchError('Ошибка'));
-            resolve("Данные c сервера");
-        }, ms);
-    });
-
+export class AddToCartComponent extends BaseComponent {
+    constructor(props) {
+        super(props);
+        this._numberPosition = 0;
+        shopButtonStart.addEventListener('click', _ => {
+            this.fetch = this._numberPosition + 1;
+            this.getElement(this.element);
+        })
+        shopMinus.addEventListener('click', _ => {
+            this.fetch = this._numberPosition - 1;
+            this.getElement(this.element);
+        });
+        shopPlus.addEventListener('click', _ => {
+            this.fetch = this._numberPosition + 1;
+            this.getElement(this.element);
+        })
+        containerNav.append(shopMinus, infoNumber, shopPlus);
+    }
+    get fetch() {
+        return this._numberPosition;
+    }
+    set fetch(value) {
+        this._numberPosition = value;
+    }
+    getElement() {
+        this.element.innerHTML = '';
+        if (this.fetch === 0) {
+            this.element.append(shopButtonStart);
+            return shopButtonStart;
+        } else {
+            infoNumber.innerHTML = `${this._numberPosition} товаров в корзине`;
+            this.element.append(containerNav);
+            return containerNav;
+        }
+    }
 }
-
-
 export class ComponentError extends Error {
     constructor(props) {
         super(props);
