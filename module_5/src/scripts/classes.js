@@ -17,8 +17,8 @@ export class BaseComponent {
         try {
             console.log(props);
             this.element = document.querySelector(props.selector);
-            this.showLoader = props.showLoader;
-            this.showEror = props.showErorState;
+            this.showLoader = typeof props.showLoader !== "undefined" ? props.showLoader : true;
+            this.showEror = typeof props.showErorState !== "undefined" ? props.showErorState : true;
             if (!this.element) {
                 throw new ComponentError('Ошибка!!! Данный элемент не найден на странице');
             }
@@ -32,6 +32,7 @@ export class BaseComponent {
     addComponent(value) {
         this.fetch(this.element).then((data) => {
             this._fetchData = data;
+            this.getElement(value).innerHTML = this._fetchData;
             this.element.append(this.getElement(value));
         }).catch((er) => {
             if (this.showEror) {
@@ -64,7 +65,7 @@ export class BaseComponent {
         });
         return new Promise((resolve, reject) => {
             element.innerHTML = '';
-            reject(new FetchError('Данные c сервера не загрузились!!'));
+            // reject(new FetchError('Данные c сервера не загрузились!!'));
             resolve(value);
         })
     }
@@ -79,12 +80,16 @@ export class AddToCartComponent extends BaseComponent {
             this.getElement(this.element);
         })
         shopMinus.addEventListener('click', _ => {
-            this.fetch = this._numberPosition - 1;
-            this.getElement(this.element);
+            this.fetchServer(this.element).then(_ => {
+                this.fetch = this._numberPosition - 1;
+                this.getElement(this.element);
+            })
         });
         shopPlus.addEventListener('click', _ => {
-            this.fetch = this._numberPosition + 1;
-            this.getElement(this.element);
+            this.fetchServer(this.element).then(_ => {
+                this.fetch = this._numberPosition + 1;
+                this.getElement(this.element);
+            })
         })
         containerNav.append(shopMinus, infoNumber, shopPlus);
     }
@@ -106,6 +111,8 @@ export class AddToCartComponent extends BaseComponent {
         }
     }
 }
+
+AddToCartComponent.prototype.fetchServer = BaseComponent.prototype.fetch;
 export class ComponentError extends Error {
     constructor(props) {
         super(props);
