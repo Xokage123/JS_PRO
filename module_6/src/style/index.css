@@ -1,0 +1,14 @@
+.bad {
+    color: red;
+    border: 2px solid red;
+}
+
+.container {
+    padding: 20px;
+    display: inline-block;
+}
+
+.good {
+    color: lightgreen;
+    border: 2px solid lightgreen;
+}
