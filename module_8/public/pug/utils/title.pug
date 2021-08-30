@@ -1,0 +1,23 @@
+doctype html
+html(lang="ru")
+	head
+		meta(charset="UTF-8")
+		meta(http-equiv="X-UA-Compatible" content="IE=edge")
+		meta(name="viewport" content="width=device-width, initial-scale=1.0")
+		title PhotoMaks
+		link(crossorigin="anonymous" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We")
+		link(rel="stylesheet" href="css/main.css")
+		link(rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css")
+		link(rel="stylesheet" href="library/jquery/jquery-ui.min.css")
+		script(src="https://api-maps.yandex.ru/2.1/?apikey=c7b62e03-9fea-4ba7-b339-4e5b9719688e&lang=ru_RU")
+		script(src="https://unpkg.com/swiper/swiper-bundle.min.js")
+		script(src="library/jquery/JQuery.min.js")
+		script(src="library/jquery/jquery-ui.min.js")
+		script(src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js")
+		script(src="js/main.js" defer)
+		include _mixin
+		include _variables
+	body
+		block header
+		block main
+		block footer
