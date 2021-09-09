@@ -7,7 +7,15 @@ for (let item in DOM) {
 }
 
 
-DOM.form.element.append(DOM.form.inputs.number.element, DOM.form.inputs.date.element, DOM.form.inputs.CVC.element, DOM.form.inputs.mail.element, DOM.form.buttons.submit.element)
-DOM.container.element.append(DOM.bank.logoContainer.element, DOM.bank.name.element, DOM.form.element);
+DOM.form.element.append(
+    DOM.form.inputs.number.element,
+    DOM.form.inputs.date.element,
+    DOM.form.inputs.CVC.element,
+    DOM.form.inputs.mail.element,
+    DOM.form.buttons.submit.element)
+DOM.container.element.append(
+    DOM.bank.logoContainer.element,
+    DOM.bank.nameBank.element,
+    DOM.form.element);
 
 mount(document.body, DOM.container.element);

@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
   },
   "author": "",
   "license": "ISC",
@@ -13,6 +14,7 @@
     "sass": "^1.38.2"
   },
   "dependencies": {
+    "card-info": "^1.2.4",
     "redom": "^3.27.1"
   }
 }

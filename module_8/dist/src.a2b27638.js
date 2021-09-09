@@ -895,7 +895,7 @@ var DOM = {
       element: (0, _redom.el)('div'),
       class: "".concat(path, "bank-logo-container")
     },
-    name: {
+    nameBank: {
       element: (0, _redom.el)('p'),
       class: "".concat(path, "bank-name")
     }
@@ -1007,7 +1007,7 @@ for (var item in _index.default) {
 
 _index.default.form.element.append(_index.default.form.inputs.number.element, _index.default.form.inputs.date.element, _index.default.form.inputs.CVC.element, _index.default.form.inputs.mail.element, _index.default.form.buttons.submit.element);
 
-_index.default.container.element.append(_index.default.bank.logoContainer.element, _index.default.bank.name.element, _index.default.form.element);
+_index.default.container.element.append(_index.default.bank.logoContainer.element, _index.default.bank.nameBank.element, _index.default.form.element);
 
 (0, _redom.mount)(document.body, _index.default.container.element);
 },{"redom":"node_modules/redom/dist/redom.es.js","./components/index.js":"src/components/index.js","./utils/index.js":"src/utils/index.js"}],"../../../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
@@ -1038,7 +1038,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50378" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "58787" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

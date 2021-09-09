@@ -11,7 +11,7 @@ const DOM = {
             element: el('div'),
             class: `${path}bank-logo-container`
         },
-        name: {
+        nameBank: {
             element: el('p'),
             class: `${path}bank-name`
         }
