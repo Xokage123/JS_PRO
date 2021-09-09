@@ -14,7 +14,10 @@
     "sass": "^1.38.2"
   },
   "dependencies": {
+    "@material-tailwind/react": "0.3.4",
     "card-info": "^1.2.4",
+    "inputmask": "^5.0.6",
+    "just-validate": "^1.5.0",
     "redom": "^3.27.1"
   }
 }

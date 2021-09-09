@@ -1,4 +1,4 @@
-export const generateClass = (component) => {
+export const generateClass = component => {
     const keys = Object.keys(component);
     keys.forEach(element => {
         switch (element) {
@@ -22,6 +22,14 @@ export const generateClass = (component) => {
                 break;
             case 'inner':
                 component.element.innerHTML = component[element];
+                break;
+            case 'data':
+                component[element].forEach(element => {
+                    component.element.dataset[element.name] = element.value
+                })
+                break;
+            case 'name':
+                component.element.name = component[element];
                 break;
             default:
                 generateClass(component[element]);
