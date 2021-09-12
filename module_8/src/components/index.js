@@ -10,17 +10,18 @@ import {
 } from '../utils/index.js'
 
 const path = 'card__';
+
 const DOM = {
 	container: {
 		element: el('div'),
 		class: `${path}container`
 	},
 	bank: {
-		logoContainer: {
+		nameBank: {
 			element: el('div'),
 			class: `${path}bank-logo-container`
 		},
-		nameBank: {
+		nameBrand: {
 			element: el('p'),
 			class: `${path}bank-name`
 		}
@@ -45,7 +46,7 @@ const DOM = {
 			},
 			date: {
 				element: el('input'),
-				type: 'date',
+				type: 'text',
 				placeholder: 'Срок',
 				name: nameInputs.date,
 				class: [
