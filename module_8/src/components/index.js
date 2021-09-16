@@ -92,7 +92,7 @@ const DOM = {
 				element: el('button'),
 				type: 'submit',
 				inner: 'Оплатить',
-				disabled: false,
+				disabled: true,
 				class: [
 					`${path}form-submit`,
 					'form-submit',

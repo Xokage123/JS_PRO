@@ -1,6 +1,8 @@
 import {
-    mount
+    mount,
+    el
 } from "redom";
+import "just-validate/dist/js/just-validate.min.js"
 import Inputmask from "inputmask"
 import CardInfo from "card-info"
 import {
@@ -12,6 +14,7 @@ import {
 import DOM, {
     valueInputs
 } from './components/index.js'
+import "../style/index.scss"
 
 const maskNumberInput = new Inputmask("9999 9999 9999 9999");
 maskNumberInput.mask(DOM.form.inputs.number.element);
@@ -52,6 +55,7 @@ const checkInput = (ev, value) => {
 DOM.form.inputs.number.element.addEventListener('input', ev => {
     const value = ev.target.inputmask.unmaskedvalue();
     const cardInfo = new CardInfo(value);
+    console.log(cardInfo);
     if (cardInfo.bankAlias) {
         DOM.bank.nameBank.element.innerHTML = `Название банка: ${bankAlias}`;
     } else {
@@ -59,11 +63,22 @@ DOM.form.inputs.number.element.addEventListener('input', ev => {
     }
     if (cardInfo.brandAlias) {
         DOM.bank.nameBrand.element.innerHTML = `Платежная система: ${cardInfo.brandName}`;
+        const brandPhoto = el("img", {
+            src: `./images/brands-logos/${cardInfo.brandAlias}-colored.png`
+        });
+        DOM.bank.nameBrand.element.append(brandPhoto);
     } else {
         DOM.bank.nameBrand.element.innerHTML = "";
     }
-    console.log(cardInfo);
 });
+
+const validateAllInputs = (arrayInputs) => {
+    let checkValuesInputs = true;
+    for (let value in arrayInputs) {
+        !arrayInputs[value] ? checkValuesInputs = false : null;
+    }
+    return checkValuesInputs
+}
 
 for (let nameInput in DOM.form.inputs) {
     DOM.form.inputs[nameInput].element.addEventListener('input', ev => {
