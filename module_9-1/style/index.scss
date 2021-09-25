@@ -1,0 +1,36 @@
+.card {
+  &__form {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 500px;
+    padding: 15px;
+    border: 2px solid black;
+    border-radius: 15px;
+  }
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+.form {
+  &__input {
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    &:focus{
+      outline: none;
+    }
+  }
+  &-submit {
+    margin-top: 10px;
+  }
+}
+
+.js-validate-error-label {
+  width: 100%;
+  border-bottom: 2px solid red;
+  margin: 5px;
+}

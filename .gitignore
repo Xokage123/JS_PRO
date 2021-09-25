@@ -1,3 +1,6 @@
-module_8/node__modules
 .cache
-peckage-lock.json
+package-lock.json
+.history
+.idea
+node_modules
+build
