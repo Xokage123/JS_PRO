@@ -53,9 +53,10 @@ const checkInput = (ev, value) => {
 }
 
 DOM.form.inputs.number.element.addEventListener('input', ev => {
-    const value = ev.target.inputmask.unmaskedvalue();
+    const input = ev.target;
+    const value = input.inputmask.unmaskedvalue();
     const cardInfo = new CardInfo(value);
-    console.log(cardInfo);
+		console.log(isFinite(value));
     if (cardInfo.bankAlias) {
         DOM.bank.nameBank.element.innerHTML = `Название банка: ${bankAlias}`;
     } else {

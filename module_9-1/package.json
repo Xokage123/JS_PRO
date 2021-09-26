@@ -53,6 +53,7 @@
     },
     "scripts": {
         "start": "webpack serve -c config/webpack/dev.cjs",
-        "build": "webpack -c config/webpack/prod.js"
+        "build": "webpack -c config/webpack/prod.js",
+        "test": "jest --watch"
     }
 }
