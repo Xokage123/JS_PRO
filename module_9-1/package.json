@@ -7,6 +7,7 @@
     "dependencies": {
         "bootstrap": "^4.6.0",
         "card-info": "^1.2.4",
+        "identity-obj-proxy": "^3.0.0",
         "immer": "^8.0.1",
         "inputmask": "^5.0.6",
         "just-validate": "^1.5.0",

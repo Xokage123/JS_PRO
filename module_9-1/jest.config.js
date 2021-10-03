@@ -3,4 +3,7 @@ module.exports = {
 		"\\.[jt]sx?$": "babel-jest"
 	},
 	testEnvironment: 'jsdom',
+	moduleNameMapper: {
+		"\\.(css|scss|less)$": "identity-obj-proxy"
+	}
 };
