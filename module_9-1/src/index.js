@@ -6,7 +6,8 @@ import "just-validate/dist/js/just-validate.min.js"
 import Inputmask from "inputmask"
 import CardInfo from "card-info"
 import {
-	Moon
+	Moon,
+	getNumberElementsInHTMLElement
 } from "./utils/index"
 import {
 	nameInputs
@@ -92,24 +93,8 @@ export const addInputsInForm = (form, inputs = []) => {
 	inputs.forEach(input => {
 		form.append(input);
 	});
-	console.log(form['0'],
-		form['1'],
-		form['2'],
-		form['3']);
-	return [
-		form['0'],
-		form['1'],
-		form['2'],
-		form['3'],
-	];
+	return form;
 }
-
-addInputsInForm(DOM.form.element, [
-	DOM.form.inputs.number.element,
-	DOM.form.inputs.date.element,
-	DOM.form.inputs.CVC.element,
-	DOM.form.inputs.mail.element,
-]);
 
 export const addSubmitInForm = (form, sumbit) => {
 	form.append(sumbit);
@@ -120,7 +105,12 @@ addSubmitInForm(DOM.form.element, DOM.form.buttons.submit.element);
 DOM.container.element.append(
 	DOM.bank.nameBrand.element,
 	DOM.bank.nameBank.element,
-	DOM.form.element);
+	addInputsInForm(DOM.form.element, [
+		DOM.form.inputs.number.element,
+		DOM.form.inputs.date.element,
+		DOM.form.inputs.CVC.element,
+		DOM.form.inputs.mail.element,
+	]));
 
 mount(document.body, DOM.container.element);
 

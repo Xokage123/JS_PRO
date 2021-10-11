@@ -4,7 +4,9 @@ import {
 } from "../../src";
 import DOM from "../../src/components";
 import {
-	Moon
+	Moon,
+	setHtml,
+	getNumberElementsInHTMLElement
 } from "../../src/utils/index"
 
 const arrayNumberBankCard = [
@@ -52,13 +54,19 @@ describe.each(arratDateCVC)('Тесты ввода номера карты %d', 
 	});
 });
 
-describe('Тесты', () => {
-	test('Проверка колличества возвращаемых инпутов', () => {
-		expect(addInputsInForm(DOM.form.element, [
-			DOM.form.inputs.number.element,
-			DOM.form.inputs.date.element,
-			DOM.form.inputs.CVC.element,
-			DOM.form.inputs.mail.element,
-		])).toBe(4);
+const forma = addInputsInForm(DOM.form.element, [
+	DOM.form.inputs.number.element,
+	DOM.form.inputs.date.element,
+	DOM.form.inputs.CVC.element,
+	DOM.form.inputs.mail.element,
+]);
+
+describe('Тесты на форму', () => {
+	test('Проверка на то, возвращается именно форма', () => {
+
+		expect(setHtml(forma)).toBeTruthy();
 	});
+	test('Проверка на то, что добавленно именно 4 импута', () => {
+		expect(getNumberElementsInHTMLElement('INPUT', forma)).toBe(4);
+	})
 })

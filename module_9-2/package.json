@@ -52,10 +52,8 @@
     "workbox-webpack-plugin": "^6.1.0"
   },
   "scripts": {
-    "start": "webpack serve -c config/webpack/dev.cjs",
-    "build": "webpack -c config/webpack/prod.js",
+    "start": "browser-sync start --server --files '*.css'",
     "cy:o": "cypress open",
-    "cy:i": "cypress install",
-    "test": "jest --watch"
+    "cy:i": "cypress install"
   }
 }
